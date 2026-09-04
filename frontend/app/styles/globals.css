@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --swedish-blue: #005B99;
+  --swedish-gold: #FECC02;
+  --nordic-dark: #0A1628;
+}
+
+body {
+  background: var(--nordic-dark);
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+}
