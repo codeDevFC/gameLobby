@@ -1,6 +1,6 @@
 'use client';
 
-import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider, useQuery, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, HttpLink } from '@apollo/client';
 
 // GraphQL Client
 const client = new ApolloClient({
@@ -57,7 +57,7 @@ const fallbackGames = [
     provider: 'Neon Gaming Studios',
     isLive: true,
     features: ['Jackpot', 'Free Spins', 'Wild Symbols'],
-    jackpot: '1,250,000kr'
+    jackpot: '1,250,000kr',
   },
   {
     id: '2',
@@ -70,7 +70,7 @@ const fallbackGames = [
     provider: 'Fortune Gaming',
     isLive: true,
     features: ['Mega Jackpot', 'Free Spins', 'Multipliers'],
-    jackpot: '1,250,000kr'
+    jackpot: '1,250,000kr',
   },
   {
     id: '3',
@@ -83,11 +83,11 @@ const fallbackGames = [
     provider: 'Epic Gaming',
     isLive: true,
     features: ['Bonus Rounds', 'Scatter', 'Wild Symbols'],
-    jackpot: '250,000kr'
+    jackpot: '250,000kr',
   },
   {
     id: '4',
-    title: 'Texas Hold\'em Poker',
+    title: "Texas Hold'em Poker",
     category: 'Table Games',
     rating: 4.6,
     plays: 6543,
@@ -96,7 +96,7 @@ const fallbackGames = [
     provider: 'Live Gaming Studios',
     isLive: true,
     features: ['Live Dealers', 'Multiplayer', 'Tournaments'],
-    jackpot: '250,000kr'
+    jackpot: '250,000kr',
   },
   {
     id: '5',
@@ -109,8 +109,8 @@ const fallbackGames = [
     provider: 'Stellar Gaming',
     isLive: true,
     features: ['Galaxy Jackpot', 'Bonus Rounds', 'Free Spins'],
-    jackpot: '250,000kr'
-  }
+    jackpot: '250,000kr',
+  },
 ];
 
 function HomePage() {
@@ -123,7 +123,11 @@ function HomePage() {
   // Use fallback data if GraphQL fails
   const games = gamesData?.games || fallbackGames;
   const featured = featuredData?.featuredGames || fallbackGames.slice(0, 4);
-  const categories = games ? [...new Set(games.map((g: any) => g.category))] : ['Slots', 'Table Games'];
+  
+  // Fix: Use Array.from for better compatibility
+  const categories = games 
+    ? Array.from(new Set(games.map((g: any) => g.category))) 
+    : ['Slots', 'Table Games'];
 
   return (
     <div className="min-h-screen bg-[#0A1628]">
@@ -177,7 +181,8 @@ function HomePage() {
                     alt={game.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
                     }}
                   />
                   {game.isLive && (
@@ -193,7 +198,7 @@ function HomePage() {
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-xs text-[#B0C4DE]">{game.category}</span>
                     <div className="flex items-center gap-1">
-                      <span className="text-[#FECC02] text-xs">★</span>
+                      <span className="text-[#FECC02] text-xs">⭐</span>
                       <span className="text-xs text-white">{game.rating}</span>
                     </div>
                   </div>
@@ -211,7 +216,6 @@ function HomePage() {
               {games?.length || 0} games available
             </span>
           </h2>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {games.map((game: any) => (
               <div
@@ -224,7 +228,8 @@ function HomePage() {
                     alt={game.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
                     }}
                   />
                   {game.isLive && (
@@ -234,7 +239,7 @@ function HomePage() {
                     </span>
                   )}
                   <div className="absolute bottom-3 right-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
-                    <span className="text-[#FECC02] text-sm">★</span>
+                    <span className="text-[#FECC02] text-sm">⭐</span>
                     <span className="text-white text-sm font-semibold">{game.rating}</span>
                   </div>
                   <div className="absolute bottom-3 left-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
