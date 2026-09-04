@@ -5,7 +5,7 @@ import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider, useQuery, gql } 
 // GraphQL Client
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: 'http://localhost:4000/graphql',
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
   }),
   cache: new InMemoryCache(),
 });
@@ -24,6 +24,7 @@ const GET_GAMES = gql`
       provider
       isLive
       features
+      jackpot
     }
   }
 `;
@@ -43,15 +44,86 @@ const GET_FEATURED_GAMES = gql`
   }
 `;
 
+// Fallback games data for when backend is not available
+const fallbackGames = [
+  {
+    id: '1',
+    title: 'Cyberpunk Legends',
+    category: 'Slots',
+    rating: 4.9,
+    plays: 8543,
+    description: 'Step into the neon-drenched future with cyberpunk-themed slots.',
+    imageUrl: '/images/games/cyberpunk-game.png',
+    provider: 'Neon Gaming Studios',
+    isLive: true,
+    features: ['Jackpot', 'Free Spins', 'Wild Symbols'],
+    jackpot: '1,250,000kr'
+  },
+  {
+    id: '2',
+    title: 'Lucky Fortune',
+    category: 'Slots',
+    rating: 4.8,
+    plays: 12345,
+    description: 'Spin the wheel of fortune with lucky symbols and massive multipliers.',
+    imageUrl: '/images/games/fortune-game.png',
+    provider: 'Fortune Gaming',
+    isLive: true,
+    features: ['Mega Jackpot', 'Free Spins', 'Multipliers'],
+    jackpot: '1,250,000kr'
+  },
+  {
+    id: '3',
+    title: 'Dragon Slayer',
+    category: 'Slots',
+    rating: 4.7,
+    plays: 9876,
+    description: 'Slay the dragon and claim the treasure in this epic fantasy slot.',
+    imageUrl: '/images/games/dragon-game.png',
+    provider: 'Epic Gaming',
+    isLive: true,
+    features: ['Bonus Rounds', 'Scatter', 'Wild Symbols'],
+    jackpot: '250,000kr'
+  },
+  {
+    id: '4',
+    title: 'Texas Hold\'em Poker',
+    category: 'Table Games',
+    rating: 4.6,
+    plays: 6543,
+    description: 'Professional poker experience with live dealers and real-time multiplayer.',
+    imageUrl: '/images/games/poker-game.png',
+    provider: 'Live Gaming Studios',
+    isLive: true,
+    features: ['Live Dealers', 'Multiplayer', 'Tournaments'],
+    jackpot: '250,000kr'
+  },
+  {
+    id: '5',
+    title: 'Space Commander',
+    category: 'Slots',
+    rating: 4.9,
+    plays: 13456,
+    description: 'Explore the galaxy with space-themed slots and cosmic jackpots.',
+    imageUrl: '/images/games/space-game.png',
+    provider: 'Stellar Gaming',
+    isLive: true,
+    features: ['Galaxy Jackpot', 'Bonus Rounds', 'Free Spins'],
+    jackpot: '250,000kr'
+  }
+];
+
 function HomePage() {
-  const { data: gamesData } = useQuery(GET_GAMES);
+  // Try to fetch from GraphQL, fallback to local data if fails
+  const { data: gamesData, error } = useQuery(GET_GAMES);
   const { data: featuredData } = useQuery(GET_FEATURED_GAMES, {
     variables: { limit: 6 },
   });
 
-  const categories = gamesData?.games
-    ? [...new Set(gamesData.games.map((g: any) => g.category))]
-    : [];
+  // Use fallback data if GraphQL fails
+  const games = gamesData?.games || fallbackGames;
+  const featured = featuredData?.featuredGames || fallbackGames.slice(0, 4);
+  const categories = games ? [...new Set(games.map((g: any) => g.category))] : ['Slots', 'Table Games'];
 
   return (
     <div className="min-h-screen bg-[#0A1628]">
@@ -76,7 +148,7 @@ function HomePage() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-xs text-[#B0C4DE] bg-[#0A1628] px-3 py-1 rounded-full border border-[#1A3355]">
-                🎮 {gamesData?.games?.length || 0} Games
+                🎮 {games?.length || 0} Games
               </span>
             </div>
           </div>
@@ -93,8 +165,8 @@ function HomePage() {
             ⭐ Featured Games
             <span className="text-xs text-[#B0C4DE] font-normal">🔥 Most Popular</span>
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {featuredData?.featuredGames?.slice(0, 6).map((game: any) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {featured.slice(0, 5).map((game: any) => (
               <div
                 key={game.id}
                 className="group relative rounded-lg overflow-hidden bg-[#112240] border border-[#1A3355] cursor-pointer transition-all duration-300 hover:scale-105 hover:border-[#FECC02] hover:shadow-xl hover:shadow-[#FECC02]/20"
@@ -131,35 +203,17 @@ function HomePage() {
           </div>
         </section>
 
-        {/* Category Filter */}
-        <section className="mb-8">
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm text-[#B0C4DE] mr-2">Categories:</span>
-            <button className="px-3 py-1 rounded-full text-xs font-medium bg-[#FECC02] text-[#0A1628]">
-              All
-            </button>
-            {categories.map((category: string) => (
-              <button
-                key={category}
-                className="px-3 py-1 rounded-full text-xs font-medium bg-[#112240] text-[#B0C4DE] border border-[#1A3355] hover:border-[#FECC02] transition-colors"
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </section>
-
         {/* All Games */}
         <section>
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             🎮 All Games
             <span className="text-xs text-[#B0C4DE] font-normal">
-              {gamesData?.games?.length || 0} games available
+              {games?.length || 0} games available
             </span>
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {gamesData?.games?.map((game: any) => (
+            {games.map((game: any) => (
               <div
                 key={game.id}
                 className="group bg-[#112240] rounded-lg overflow-hidden border border-[#1A3355] transition-all duration-300 hover:scale-[1.02] hover:border-[#FECC02] hover:shadow-xl hover:shadow-[#FECC02]/10"
@@ -206,18 +260,6 @@ function HomePage() {
                       🏆 Jackpot: {game.jackpot}
                     </div>
                   )}
-                  {game.features && game.features.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {game.features.slice(0, 3).map((feature: string, index: number) => (
-                        <span
-                          key={index}
-                          className="text-xs px-2 py-0.5 bg-[#FECC02]/10 border border-[#FECC02]/20 rounded-full text-[#FECC02]"
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
             ))}
@@ -238,7 +280,7 @@ function HomePage() {
             </div>
           </div>
           <div className="text-center text-xs text-[#6B8AAB] mt-4">
-            © 2026 GameLobby · Elohim Beauty Salon · 🇸🇪 Sweden
+            © 2026 GameLobby · 🇸🇪 Sweden
           </div>
         </footer>
       </main>
