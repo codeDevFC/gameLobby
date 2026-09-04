@@ -5,11 +5,11 @@ export const games = [
     category: 'Slots',
     rating: 4.8,
     plays: 15423,
-    description: 'Epic fantasy slot game with bonus rounds',
-    imageUrl: 'https://images.unsplash.com/photo-1591369822090-2724a86b17a0?w=400&h=300&fit=crop',
+    description: 'Epic fantasy slot game with bonus rounds and free spins',
+    imageUrl: 'https://images.unsplash.com/photo-1647710232222-376180e5f014?w=400&h=300&fit=crop',
     provider: 'Epic Gaming',
     isLive: true,
-    features: ['Bonus Rounds', 'Free Spins']
+    features: ['Bonus Rounds', 'Free Spins', 'Progressive Jackpot']
   },
   {
     id: '2',
@@ -17,11 +17,11 @@ export const games = [
     category: 'Table Games',
     rating: 4.6,
     plays: 8765,
-    description: 'High-stakes poker with live dealers',
-    imageUrl: 'https://images.unsplash.com/photo-1564934668576-0e5ca9d32700?w=400&h=300&fit=crop',
+    description: 'High-stakes poker with live dealers and multiplayer',
+    imageUrl: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=400&h=300&fit=crop',
     provider: 'Live Gaming Studios',
     isLive: true,
-    features: ['Live Dealers', 'Multiplayer']
+    features: ['Live Dealers', 'Multiplayer', 'Tournaments']
   },
   {
     id: '3',
@@ -29,11 +29,11 @@ export const games = [
     category: 'Slots',
     rating: 4.9,
     plays: 23456,
-    description: 'Space adventure with expanding wilds',
-    imageUrl: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&h=300&fit=crop',
+    description: 'Space adventure with expanding wilds and re-spins',
+    imageUrl: 'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop',
     provider: 'Stellar Gaming',
     isLive: true,
-    features: ['Expanding Wilds', 'Re-spins']
+    features: ['Expanding Wilds', 'Re-spins', 'High Volatility']
   },
   {
     id: '4',
@@ -41,10 +41,82 @@ export const games = [
     category: 'Table Games',
     rating: 4.5,
     plays: 6543,
-    description: 'Premium blackjack experience',
-    imageUrl: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=300&fit=crop',
+    description: 'Premium blackjack experience with side bets',
+    imageUrl: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=400&h=300&fit=crop',
     provider: 'Card Masters',
     isLive: true,
-    features: ['Side Bets', 'Multi-Hand']
+    features: ['Side Bets', 'Insurance', 'Multi-Hand']
+  },
+  {
+    id: '5',
+    title: 'Mega Moolah Safari',
+    category: 'Slots',
+    rating: 4.7,
+    plays: 12345,
+    description: 'Go on a safari adventure with massive progressive jackpots',
+    imageUrl: 'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop',
+    provider: 'Safari Games',
+    isLive: true,
+    features: ['Progressive Jackpot', 'Free Spins', 'Wild Symbols']
+  },
+  {
+    id: '6',
+    title: 'Roulette Royale',
+    category: 'Table Games',
+    rating: 4.4,
+    plays: 4321,
+    description: 'Experience the elegance of European roulette with live streaming',
+    imageUrl: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=400&h=300&fit=crop',
+    provider: 'Golden Table Games',
+    isLive: true,
+    features: ['Live Stream', 'Chat', 'Multiple Bet Types']
+  },
+  {
+    id: '7',
+    title: 'Cyberpunk 2077',
+    category: 'Slots',
+    rating: 4.3,
+    plays: 9876,
+    description: 'Neon-drenched cyberpunk adventure with futuristic features',
+    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop',
+    provider: 'Neon Gaming',
+    isLive: true,
+    features: ['Neon Wilds', 'Free Spins', 'Cyber Bonus']
+  },
+  {
+    id: '8',
+    title: 'Baccarat Pearl',
+    category: 'Table Games',
+    rating: 4.2,
+    plays: 3210,
+    description: 'Play the sophisticated game of baccarat with VIP tables',
+    imageUrl: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=400&h=300&fit=crop',
+    provider: 'Pearl Gaming',
+    isLive: true,
+    features: ['VIP Tables', 'Side Bets', 'Live Dealers']
+  },
+  {
+    id: '9',
+    title: 'Gonzo\'s Quest',
+    category: 'Slots',
+    rating: 4.1,
+    plays: 7890,
+    description: 'Search for Eldorado with avalanche reels and multipliers',
+    imageUrl: 'https://images.unsplash.com/photo-1647710232222-376180e5f014?w=400&h=300&fit=crop',
+    provider: 'Adventure Studios',
+    isLive: true,
+    features: ['Avalanche Reels', 'Multipliers', 'Free Falls']
+  },
+  {
+    id: '10',
+    title: 'Craps Live',
+    category: 'Table Games',
+    rating: 4.0,
+    plays: 2100,
+    description: 'Roll the dice in this exciting live craps game',
+    imageUrl: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=400&h=300&fit=crop',
+    provider: 'Dice Masters',
+    isLive: true,
+    features: ['Live Dealers', 'Multiple Bets', 'Tournament Mode']
   }
 ];
