@@ -2,9 +2,7 @@
 
 import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider, useQuery, gql } from '@apollo/client';
 
-// ============================================================
 // GraphQL Client
-// ============================================================
 const client = new ApolloClient({
   link: new HttpLink({
     uri: 'http://localhost:4000/graphql',
@@ -12,9 +10,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// ============================================================
 // GraphQL Queries
-// ============================================================
 const GET_GAMES = gql`
   query GetGames {
     games {
@@ -47,25 +43,19 @@ const GET_FEATURED_GAMES = gql`
   }
 `;
 
-// ============================================================
-// HomePage Component
-// ============================================================
 function HomePage() {
   const { data: gamesData } = useQuery(GET_GAMES);
   const { data: featuredData } = useQuery(GET_FEATURED_GAMES, {
     variables: { limit: 6 },
   });
 
-  // Get unique categories
   const categories = gamesData?.games
     ? [...new Set(gamesData.games.map((g: any) => g.category))]
     : [];
 
   return (
     <div className="min-h-screen bg-[#0A1628]">
-      {/* ============================================================
-           SWEDISH HEADER
-           ============================================================ */}
+      {/* Header */}
       <header className="bg-[#112240] border-b border-[#1A3355] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
@@ -94,14 +84,10 @@ function HomePage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* ============================================================
-             SWEDISH FLAG DIVIDER
-             ============================================================ */}
+        {/* Swedish Flag Divider */}
         <div className="w-full h-1 bg-gradient-to-r from-[#005B99] via-[#FECC02] to-[#005B99] rounded-full mb-8"></div>
 
-        {/* ============================================================
-             FEATURED GAMES SECTION
-             ============================================================ */}
+        {/* Featured Games */}
         <section className="mb-12">
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             ⭐ Featured Games
@@ -145,9 +131,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* ============================================================
-             CATEGORY FILTER
-             ============================================================ */}
+        {/* Category Filter */}
         <section className="mb-8">
           <div className="flex flex-wrap gap-2">
             <span className="text-sm text-[#B0C4DE] mr-2">Categories:</span>
@@ -165,9 +149,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* ============================================================
-             ALL GAMES SECTION
-             ============================================================ */}
+        {/* All Games */}
         <section>
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             🎮 All Games
@@ -242,9 +224,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* ============================================================
-             SWEDISH FOOTER
-             ============================================================ */}
+        {/* Footer */}
         <footer className="mt-12 pt-8 border-t border-[#1A3355]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
