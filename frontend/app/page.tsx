@@ -1,50 +1,9 @@
 'use client';
 
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, HttpLink } from '@apollo/client';
+import { useState, useEffect } from 'react';
 
-// GraphQL Client
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
-  }),
-  cache: new InMemoryCache(),
-});
-
-// GraphQL Queries
-const GET_GAMES = gql`
-  query GetGames {
-    games {
-      id
-      title
-      description
-      category
-      rating
-      plays
-      imageUrl
-      provider
-      isLive
-      features
-      jackpot
-    }
-  }
-`;
-
-const GET_FEATURED_GAMES = gql`
-  query GetFeaturedGames($limit: Int) {
-    featuredGames(limit: $limit) {
-      id
-      title
-      category
-      rating
-      plays
-      imageUrl
-      provider
-      isLive
-    }
-  }
-`;
-
-// Fallback games data for when backend is not available
+// Fallback games data
 const fallbackGames = [
   {
     id: '1',
@@ -111,23 +70,186 @@ const fallbackGames = [
     features: ['Galaxy Jackpot', 'Bonus Rounds', 'Free Spins'],
     jackpot: '250,000kr',
   },
+  {
+    id: '6',
+    title: 'Starburst Galaxy',
+    category: 'Slots',
+    rating: 4.5,
+    plays: 8765,
+    description: 'Classic space adventure with expanding wilds and re-spins.',
+    imageUrl: '/images/games/space-game.png',
+    provider: 'Stellar Gaming',
+    isLive: false,
+    features: ['Expanding Wilds', 'Re-spins', 'High Volatility'],
+  },
+  {
+    id: '7',
+    title: 'Poker Royal',
+    category: 'Table Games',
+    rating: 4.4,
+    plays: 4321,
+    description: 'High-stakes poker with VIP tables and exclusive tournaments.',
+    imageUrl: '/images/games/poker-game.png',
+    provider: 'Card Masters',
+    isLive: false,
+    features: ['VIP Tables', 'Side Bets', 'Multi-Hand'],
+  },
+  {
+    id: '8',
+    title: "Dragon's Fortune",
+    category: 'Slots',
+    rating: 4.3,
+    plays: 7654,
+    description: 'Epic fantasy slot with dragon-themed bonuses and free spins.',
+    imageUrl: '/images/games/dragon-game.png',
+    provider: 'Epic Gaming',
+    isLive: false,
+    features: ['Bonus Rounds', 'Free Spins', 'Progressive Jackpot'],
+  },
 ];
 
+// GraphQL Client (only if backend is available)
+const getClient = () => {
+  try {
+    return new ApolloClient({
+      link: new HttpLink({
+        uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
+      }),
+      cache: new InMemoryCache(),
+    });
+  } catch {
+    return null;
+  }
+};
+
+const client = getClient();
+
+const GET_GAMES = gql`
+  query GetGames {
+    games {
+      id
+      title
+      description
+      category
+      rating
+      plays
+      imageUrl
+      provider
+      isLive
+      features
+      jackpot
+    }
+  }
+`;
+
+const GET_FEATURED_GAMES = gql`
+  query GetFeaturedGames($limit: Int) {
+    featuredGames(limit: $limit) {
+      id
+      title
+      category
+      rating
+      plays
+      imageUrl
+      provider
+      isLive
+    }
+  }
+`;
+
+function GameCard({ game, featured = false }: { game: any; featured?: boolean }) {
+  return (
+    <div
+      className={`group bg-[#112240] rounded-lg overflow-hidden border border-[#1A3355] transition-all duration-300 ${
+        featured 
+          ? 'hover:scale-105 hover:border-[#FECC02] hover:shadow-xl hover:shadow-[#FECC02]/20' 
+          : 'hover:scale-[1.02] hover:border-[#FECC02] hover:shadow-xl hover:shadow-[#FECC02]/10'
+      }`}
+    >
+      <div className="aspect-video relative bg-[#0A1628]">
+        <img
+          src={game.imageUrl}
+          alt={game.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src =
+              'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
+          }}
+        />
+        {game.isLive && (
+          <span className="absolute top-3 left-3 bg-[#FECC02] text-[#0A1628] text-xs font-bold px-2.5 py-1 rounded-full animate-pulse flex items-center gap-1">
+            <span className="w-1.5 h-1.5 bg-[#0A1628] rounded-full"></span>
+            LIVE
+          </span>
+        )}
+        <div className="absolute bottom-3 right-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
+          <span className="text-[#FECC02] text-sm">⭐</span>
+          <span className="text-white text-sm font-semibold">{game.rating}</span>
+        </div>
+        <div className="absolute bottom-3 left-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
+          <span className="text-[#B0C4DE] text-xs">👾</span>
+          <span className="text-white text-xs">{game.plays.toLocaleString()}</span>
+        </div>
+      </div>
+      <div className="p-4">
+        <h3 className="text-white font-semibold text-base truncate group-hover:text-[#FECC02] transition-colors">
+          {game.title}
+        </h3>
+        <p className="text-[#B0C4DE] text-sm mt-1 line-clamp-2">{game.description}</p>
+        <div className="flex items-center flex-wrap gap-2 mt-3">
+          <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
+            {game.category}
+          </span>
+          <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
+            {game.provider}
+          </span>
+        </div>
+        {game.jackpot && (
+          <div className="mt-2 text-xs font-bold text-[#FECC02]">
+            🏆 Jackpot: {game.jackpot}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function HomePage() {
-  // Try to fetch from GraphQL, fallback to local data if fails
-  const { data: gamesData, error } = useQuery(GET_GAMES);
-  const { data: featuredData } = useQuery(GET_FEATURED_GAMES, {
-    variables: { limit: 6 },
-  });
+  const [games, setGames] = useState(fallbackGames);
+  const [featured, setFeatured] = useState(fallbackGames.slice(0, 4));
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!client) {
+      console.log('Using fallback data (GraphQL client not available)');
+      return;
+    }
+
+    setLoading(true);
+    // Try to fetch from GraphQL
+    Promise.all([
+      client.query({ query: GET_GAMES }),
+      client.query({ query: GET_FEATURED_GAMES, variables: { limit: 6 } })
+    ])
+    .then(([gamesResult, featuredResult]) => {
+      if (gamesResult.data?.games) {
+        setGames(gamesResult.data.games);
+      }
+      if (featuredResult.data?.featuredGames) {
+        setFeatured(featuredResult.data.featuredGames);
+      }
+    })
+    .catch((error) => {
+      console.log('Using fallback data (GraphQL error):', error.message);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+  }, []);
 
   // Use fallback data if GraphQL fails
-  const games = gamesData?.games || fallbackGames;
-  const featured = featuredData?.featuredGames || fallbackGames.slice(0, 4);
-  
-  // Fix: Use Array.from for better compatibility
-  const categories = games 
-    ? Array.from(new Set(games.map((g: any) => g.category))) 
-    : ['Slots', 'Table Games'];
+  const displayGames = games || fallbackGames;
+  const displayFeatured = featured || fallbackGames.slice(0, 4);
 
   return (
     <div className="min-h-screen bg-[#0A1628]">
@@ -152,7 +274,7 @@ function HomePage() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-xs text-[#B0C4DE] bg-[#0A1628] px-3 py-1 rounded-full border border-[#1A3355]">
-                🎮 {games?.length || 0} Games
+                🎮 {displayGames?.length || 0} Games
               </span>
             </div>
           </div>
@@ -170,40 +292,8 @@ function HomePage() {
             <span className="text-xs text-[#B0C4DE] font-normal">🔥 Most Popular</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {featured.slice(0, 5).map((game: any) => (
-              <div
-                key={game.id}
-                className="group relative rounded-lg overflow-hidden bg-[#112240] border border-[#1A3355] cursor-pointer transition-all duration-300 hover:scale-105 hover:border-[#FECC02] hover:shadow-xl hover:shadow-[#FECC02]/20"
-              >
-                <div className="aspect-video relative">
-                  <img
-                    src={game.imageUrl}
-                    alt={game.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
-                    }}
-                  />
-                  {game.isLive && (
-                    <span className="absolute top-2 left-2 bg-[#FECC02] text-[#0A1628] text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
-                      LIVE
-                    </span>
-                  )}
-                </div>
-                <div className="p-3">
-                  <h3 className="text-sm font-medium text-white truncate group-hover:text-[#FECC02] transition-colors">
-                    {game.title}
-                  </h3>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xs text-[#B0C4DE]">{game.category}</span>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[#FECC02] text-xs">⭐</span>
-                      <span className="text-xs text-white">{game.rating}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {displayFeatured.slice(0, 5).map((game: any) => (
+              <GameCard key={game.id} game={game} featured={true} />
             ))}
           </div>
         </section>
@@ -213,60 +303,12 @@ function HomePage() {
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             🎮 All Games
             <span className="text-xs text-[#B0C4DE] font-normal">
-              {games?.length || 0} games available
+              {displayGames?.length || 0} games available
             </span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {games.map((game: any) => (
-              <div
-                key={game.id}
-                className="group bg-[#112240] rounded-lg overflow-hidden border border-[#1A3355] transition-all duration-300 hover:scale-[1.02] hover:border-[#FECC02] hover:shadow-xl hover:shadow-[#FECC02]/10"
-              >
-                <div className="aspect-video relative bg-[#0A1628]">
-                  <img
-                    src={game.imageUrl}
-                    alt={game.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
-                    }}
-                  />
-                  {game.isLive && (
-                    <span className="absolute top-3 left-3 bg-[#FECC02] text-[#0A1628] text-xs font-bold px-2.5 py-1 rounded-full animate-pulse flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-[#0A1628] rounded-full"></span>
-                      LIVE
-                    </span>
-                  )}
-                  <div className="absolute bottom-3 right-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
-                    <span className="text-[#FECC02] text-sm">⭐</span>
-                    <span className="text-white text-sm font-semibold">{game.rating}</span>
-                  </div>
-                  <div className="absolute bottom-3 left-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
-                    <span className="text-[#B0C4DE] text-xs">👾</span>
-                    <span className="text-white text-xs">{game.plays.toLocaleString()}</span>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-white font-semibold text-base truncate group-hover:text-[#FECC02] transition-colors">
-                    {game.title}
-                  </h3>
-                  <p className="text-[#B0C4DE] text-sm mt-1 line-clamp-2">{game.description}</p>
-                  <div className="flex items-center flex-wrap gap-2 mt-3">
-                    <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
-                      {game.category}
-                    </span>
-                    <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
-                      {game.provider}
-                    </span>
-                  </div>
-                  {game.jackpot && (
-                    <div className="mt-2 text-xs font-bold text-[#FECC02]">
-                      🏆 Jackpot: {game.jackpot}
-                    </div>
-                  )}
-                </div>
-              </div>
+            {displayGames.map((game: any) => (
+              <GameCard key={game.id} game={game} />
             ))}
           </div>
         </section>
@@ -294,6 +336,11 @@ function HomePage() {
 }
 
 export default function Home() {
+  if (!client) {
+    // If no GraphQL client, render directly without ApolloProvider
+    return <HomePage />;
+  }
+  
   return (
     <ApolloProvider client={client}>
       <HomePage />
