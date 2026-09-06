@@ -13,29 +13,26 @@ async function startServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    introspection: process.env.NODE_ENV !== 'production',
+    introspection: true,
   });
 
   await server.start();
 
-  // Configure CORS for production
+  // Configure CORS for all origins (for development)
   app.use(cors({
-    origin: [
-      'http://localhost:3000',
-      'https://game-lobby-nine.vercel.app',
-      'https://game-lobby-oz9ml0kq6-felix-cobbinahs-projects.vercel.app',
-      'https://game-lobby-57gvcd0qi-felix-cobbinahs-projects.vercel.app'
-    ],
+    origin: '*', // Allow all origins for development
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   }));
-  
+
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Health check endpoint
+  // Health check
   app.get('/health', (req, res) => {
-    res.status(200).json({ 
-      status: 'healthy', 
+    res.status(200).json({
+      status: 'healthy',
       database: 'neon-postgresql',
       timestamp: new Date().toISOString()
     });
@@ -51,6 +48,7 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}/graphql`);
     console.log(`✅ Connected to Neon PostgreSQL`);
+    console.log(`📍 CORS enabled for all origins`);
   });
 }
 

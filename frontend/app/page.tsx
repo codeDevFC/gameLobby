@@ -1,21 +1,15 @@
 'use client';
 
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, HttpLink } from '@apollo/client';
+import { useState, useEffect } from 'react';
 
-// Create Apollo Client with proper URL
-const getClient = () => {
-  const uri = process.env.NEXT_PUBLIC_GRAPHQL_URL || 
-              'https://game-lobby-57gvcd0qi-felix-cobbinahs-projects.vercel.app/graphql';
-  
-  return new ApolloClient({
-    link: new HttpLink({
-      uri: uri,
-    }),
-    cache: new InMemoryCache(),
-  });
-};
-
-const client = getClient();
+// Create Apollo Client
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
+  }),
+  cache: new InMemoryCache(),
+});
 
 // GraphQL Query
 const GET_GAMES = gql`
@@ -36,7 +30,7 @@ const GET_GAMES = gql`
   }
 `;
 
-// Fallback games with working image URLs
+// Fallback games
 const fallbackGames = [
   {
     id: '1',
@@ -45,7 +39,7 @@ const fallbackGames = [
     rating: 4.9,
     plays: 8543,
     description: 'Step into the neon-drenched future with cyberpunk-themed slots.',
-    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop',
+    imageUrl: '/images/games/cyberpunk-game.png',
     provider: 'Neon Gaming Studios',
     isLive: true,
     features: ['Jackpot', 'Free Spins', 'Wild Symbols'],
@@ -58,7 +52,7 @@ const fallbackGames = [
     rating: 4.8,
     plays: 12345,
     description: 'Spin the wheel of fortune with lucky symbols and massive multipliers.',
-    imageUrl: 'https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&h=300&fit=crop',
+    imageUrl: '/images/games/fortune-game.png',
     provider: 'Fortune Gaming',
     isLive: true,
     features: ['Mega Jackpot', 'Free Spins', 'Multipliers'],
@@ -71,7 +65,7 @@ const fallbackGames = [
     rating: 4.7,
     plays: 9876,
     description: 'Slay the dragon and claim the treasure in this epic fantasy slot.',
-    imageUrl: 'https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=400&h=300&fit=crop',
+    imageUrl: '/images/games/dragon-game.png',
     provider: 'Epic Gaming',
     isLive: true,
     features: ['Bonus Rounds', 'Scatter', 'Wild Symbols'],
@@ -84,7 +78,7 @@ const fallbackGames = [
     rating: 4.6,
     plays: 6543,
     description: 'Professional poker experience with live dealers and real-time multiplayer.',
-    imageUrl: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=400&h=300&fit=crop',
+    imageUrl: '/images/games/poker-game.png',
     provider: 'Live Gaming Studios',
     isLive: true,
     features: ['Live Dealers', 'Multiplayer', 'Tournaments'],
@@ -97,103 +91,17 @@ const fallbackGames = [
     rating: 4.9,
     plays: 13456,
     description: 'Explore the galaxy with space-themed slots and cosmic jackpots.',
-    imageUrl: 'https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=400&h=300&fit=crop',
+    imageUrl: '/images/games/space-game.png',
     provider: 'Stellar Gaming',
     isLive: true,
     features: ['Galaxy Jackpot', 'Bonus Rounds', 'Free Spins'],
     jackpot: '250,000kr',
   },
-  {
-    id: '6',
-    title: 'Starburst Galaxy',
-    category: 'Slots',
-    rating: 4.5,
-    plays: 8765,
-    description: 'Classic space adventure with expanding wilds and re-spins.',
-    imageUrl: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400&h=300&fit=crop',
-    provider: 'Stellar Gaming',
-    isLive: true,
-    features: ['Expanding Wilds', 'Re-spins', 'High Volatility'],
-  },
-  {
-    id: '7',
-    title: 'Poker Royal',
-    category: 'Table Games',
-    rating: 4.4,
-    plays: 4321,
-    description: 'High-stakes poker with VIP tables and exclusive tournaments.',
-    imageUrl: 'https://images.unsplash.com/photo-1593078166039-c9878df5c520?w=400&h=300&fit=crop',
-    provider: 'Card Masters',
-    isLive: true,
-    features: ['VIP Tables', 'Side Bets', 'Multi-Hand'],
-  },
-  {
-    id: '8',
-    title: "Dragon's Fortune",
-    category: 'Slots',
-    rating: 4.3,
-    plays: 7654,
-    description: 'Epic fantasy slot with dragon-themed bonuses and free spins.',
-    imageUrl: 'https://images.unsplash.com/photo-1551269901-4c5e0f6a3a3a?w=400&h=300&fit=crop',
-    provider: 'Epic Gaming',
-    isLive: true,
-    features: ['Bonus Rounds', 'Free Spins', 'Progressive Jackpot'],
-  },
 ];
-
-function GameCard({ game }) {
-  return (
-    <div className="group bg-[#112240] rounded-lg overflow-hidden border border-[#1A3355] hover:border-[#FECC02] transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-[#FECC02]/10">
-      <div className="aspect-video relative bg-[#0A1628]">
-        <img
-          src={game.imageUrl}
-          alt={game.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
-          }}
-        />
-        {game.isLive && (
-          <span className="absolute top-3 left-3 bg-[#FECC02] text-[#0A1628] text-xs font-bold px-2.5 py-1 rounded-full animate-pulse flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-[#0A1628] rounded-full"></span>
-            LIVE
-          </span>
-        )}
-        <div className="absolute bottom-3 right-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
-          <span className="text-[#FECC02]">⭐</span>
-          <span className="text-white text-sm font-semibold">{game.rating}</span>
-        </div>
-        <div className="absolute bottom-3 left-3 bg-[#0A1628]/80 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#1A3355]">
-          <span className="text-[#B0C4DE] text-xs">👾</span>
-          <span className="text-white text-xs">{game.plays.toLocaleString()}</span>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="text-white font-semibold text-base truncate group-hover:text-[#FECC02] transition-colors">
-          {game.title}
-        </h3>
-        <p className="text-[#B0C4DE] text-sm mt-1 line-clamp-2">{game.description}</p>
-        <div className="flex items-center flex-wrap gap-2 mt-3">
-          <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
-            {game.category}
-          </span>
-          <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
-            {game.provider}
-          </span>
-        </div>
-        {game.jackpot && (
-          <div className="mt-2 text-xs font-bold text-[#FECC02]">
-            🏆 Jackpot: {game.jackpot}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function HomePage() {
   const { data, loading, error } = useQuery(GET_GAMES);
-  
+
   console.log('GraphQL Data:', data);
   console.log('Loading:', loading);
   console.log('Error:', error);
@@ -206,7 +114,6 @@ function HomePage() {
     );
   }
 
-  // Use fallback games if no data or error
   const games = data?.games || fallbackGames;
 
   return (
@@ -230,13 +137,50 @@ function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {games.map((game) => (
-            <GameCard key={game.id} game={game} />
+            <div key={game.id} className="group bg-[#112240] rounded-lg overflow-hidden border border-[#1A3355] hover:border-[#FECC02] transition-all duration-300 hover:scale-[1.02]">
+              <div className="aspect-video relative bg-[#0A1628]">
+                <img
+                  src={game.imageUrl}
+                  alt={game.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1614294149010-950b698f7180?w=400&h=300&fit=crop';
+                  }}
+                />
+                {game.isLive && (
+                  <span className="absolute top-3 left-3 bg-[#FECC02] text-[#0A1628] text-xs font-bold px-2.5 py-1 rounded-full animate-pulse">
+                    LIVE
+                  </span>
+                )}
+                <div className="absolute bottom-3 right-3 bg-[#0A1628]/80 px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <span className="text-[#FECC02]">⭐</span>
+                  <span className="text-white text-sm font-semibold">{game.rating}</span>
+                </div>
+                <div className="absolute bottom-3 left-3 bg-[#0A1628]/80 px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <span className="text-[#B0C4DE] text-xs">👾</span>
+                  <span className="text-white text-xs">{game.plays.toLocaleString()}</span>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="text-white font-semibold text-base truncate">{game.title}</h3>
+                <p className="text-[#B0C4DE] text-sm mt-1 line-clamp-2">{game.description}</p>
+                <div className="flex items-center flex-wrap gap-2 mt-3">
+                  <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
+                    {game.category}
+                  </span>
+                  <span className="text-xs px-2.5 py-1 bg-[#0A1628] border border-[#1A3355] rounded-full text-[#B0C4DE]">
+                    {game.provider}
+                  </span>
+                </div>
+                {game.jackpot && (
+                  <div className="mt-2 text-xs font-bold text-[#FECC02]">
+                    🏆 Jackpot: {game.jackpot}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
         </div>
-
-        <footer className="mt-12 pt-8 border-t border-[#1A3355] text-center text-[#6B8AAB] text-sm">
-          <p>© 2026 GameLobby · 🇸🇪 Sweden · Made with ❤️</p>
-        </footer>
       </div>
     </div>
   );
