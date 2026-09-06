@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 // Create Apollo Client
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'https://game-lobby-kou8ncbmo-felix-cobbinahs-projects.vercel.app/graphql',
   }),
   cache: new InMemoryCache(),
 });
@@ -30,7 +30,7 @@ const GET_GAMES = gql`
   }
 `;
 
-// Fallback games
+// Fallback games with working images
 const fallbackGames = [
   {
     id: '1',
@@ -39,7 +39,7 @@ const fallbackGames = [
     rating: 4.9,
     plays: 8543,
     description: 'Step into the neon-drenched future with cyberpunk-themed slots.',
-    imageUrl: '/images/games/cyberpunk-game.png',
+    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop',
     provider: 'Neon Gaming Studios',
     isLive: true,
     features: ['Jackpot', 'Free Spins', 'Wild Symbols'],
@@ -52,7 +52,7 @@ const fallbackGames = [
     rating: 4.8,
     plays: 12345,
     description: 'Spin the wheel of fortune with lucky symbols and massive multipliers.',
-    imageUrl: '/images/games/fortune-game.png',
+    imageUrl: 'https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&h=300&fit=crop',
     provider: 'Fortune Gaming',
     isLive: true,
     features: ['Mega Jackpot', 'Free Spins', 'Multipliers'],
@@ -65,7 +65,7 @@ const fallbackGames = [
     rating: 4.7,
     plays: 9876,
     description: 'Slay the dragon and claim the treasure in this epic fantasy slot.',
-    imageUrl: '/images/games/dragon-game.png',
+    imageUrl: 'https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=400&h=300&fit=crop',
     provider: 'Epic Gaming',
     isLive: true,
     features: ['Bonus Rounds', 'Scatter', 'Wild Symbols'],
@@ -78,7 +78,7 @@ const fallbackGames = [
     rating: 4.6,
     plays: 6543,
     description: 'Professional poker experience with live dealers and real-time multiplayer.',
-    imageUrl: '/images/games/poker-game.png',
+    imageUrl: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=400&h=300&fit=crop',
     provider: 'Live Gaming Studios',
     isLive: true,
     features: ['Live Dealers', 'Multiplayer', 'Tournaments'],
@@ -91,11 +91,47 @@ const fallbackGames = [
     rating: 4.9,
     plays: 13456,
     description: 'Explore the galaxy with space-themed slots and cosmic jackpots.',
-    imageUrl: '/images/games/space-game.png',
+    imageUrl: 'https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=400&h=300&fit=crop',
     provider: 'Stellar Gaming',
     isLive: true,
     features: ['Galaxy Jackpot', 'Bonus Rounds', 'Free Spins'],
     jackpot: '250,000kr',
+  },
+  {
+    id: '6',
+    title: 'Starburst Galaxy',
+    category: 'Slots',
+    rating: 4.5,
+    plays: 8765,
+    description: 'Classic space adventure with expanding wilds and re-spins.',
+    imageUrl: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400&h=300&fit=crop',
+    provider: 'Stellar Gaming',
+    isLive: true,
+    features: ['Expanding Wilds', 'Re-spins', 'High Volatility'],
+  },
+  {
+    id: '7',
+    title: 'Poker Royal',
+    category: 'Table Games',
+    rating: 4.4,
+    plays: 4321,
+    description: 'High-stakes poker with VIP tables and exclusive tournaments.',
+    imageUrl: 'https://images.unsplash.com/photo-1593078166039-c9878df5c520?w=400&h=300&fit=crop',
+    provider: 'Card Masters',
+    isLive: true,
+    features: ['VIP Tables', 'Side Bets', 'Multi-Hand'],
+  },
+  {
+    id: '8',
+    title: "Dragon's Fortune",
+    category: 'Slots',
+    rating: 4.3,
+    plays: 7654,
+    description: 'Epic fantasy slot with dragon-themed bonuses and free spins.',
+    imageUrl: 'https://images.unsplash.com/photo-1551269901-4c5e0f6a3a3a?w=400&h=300&fit=crop',
+    provider: 'Epic Gaming',
+    isLive: true,
+    features: ['Bonus Rounds', 'Free Spins', 'Progressive Jackpot'],
   },
 ];
 
@@ -112,6 +148,10 @@ function HomePage() {
         <div className="text-white text-xl animate-pulse">Loading games...</div>
       </div>
     );
+  }
+
+  if (error) {
+    console.error('GraphQL Error:', error);
   }
 
   const games = data?.games || fallbackGames;
