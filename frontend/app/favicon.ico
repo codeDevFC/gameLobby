@@ -1,5 +1,1 @@
-<!-- This is a simple SVG favicon -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="20" fill="#0A1628"/>
-  <text x="50" y="65" font-family="Arial" font-size="40" font-weight="bold" fill="#FECC02" text-anchor="middle">GL</text>
-</svg>
+data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMEExNjI4Ii8+PHRleHQgeD0iNTAiIHk9IjY1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkVDQzAyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5HTDwvdGV4dD48L3N2Zz4=
