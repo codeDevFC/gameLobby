@@ -13,18 +13,36 @@ async function startServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    introspection: process.env.NODE_ENV !== 'production',
   });
 
   await server.start();
 
+  // Configure CORS for production
   app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: [
+      'http://localhost:3000',
+      'https://game-lobby-nine.vercel.app',
+      'https://game-lobby-oz9ml0kq6-felix-cobbinahs-projects.vercel.app',
+      'https://game-lobby-57gvcd0qi-felix-cobbinahs-projects.vercel.app'
+    ],
     credentials: true,
   }));
-  app.use(express.json());
+  
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+  // Health check endpoint
+  app.get('/health', (req, res) => {
+    res.status(200).json({ 
+      status: 'healthy', 
+      database: 'neon-postgresql',
+      timestamp: new Date().toISOString()
+    });
+  });
 
   app.use('/graphql', expressMiddleware(server, {
-    context: async ({ req }: any) => ({
+    context: async ({ req }) => ({
       req,
       prisma,
     }),
@@ -36,9 +54,13 @@ async function startServer() {
   });
 }
 
-startServer().catch(console.error);
+startServer().catch((error) => {
+  console.error('Error starting server:', error);
+  process.exit(1);
+});
 
 process.on('SIGINT', async () => {
+  console.log('Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
 });
